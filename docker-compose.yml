@@ -1,0 +1,35 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER_FILE: /run/secrets/postgres-user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+    secrets:
+      - postgres-user
+      - postgres-password
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $(cat /run/secrets/postgres-user) -d $POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+secrets:
+  postgres-user:
+    file: ./products-service/.secrets/postgres-user
+  postgres-password:
+    file: ./products-service/.secrets/postgres-password
