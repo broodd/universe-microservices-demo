@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start:products": "nx serve products",
+    "start:notifications": "nx serve notifications",
     "start:all": "nx run-many --target=serve --all --parallel",
     "build": "nx run-many --target=build --all",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
