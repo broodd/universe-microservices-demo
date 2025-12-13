@@ -2,7 +2,9 @@
 dist/
 node_modules/
 build/
-postgres_data/
+/postgres_data
+/rabbitmq_data
+/rabbitmq_logs
 
 # Tests
 coverage/
