@@ -1,11 +1,12 @@
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { NestFactory } from '@nestjs/core';
 
+import { ConfigMode } from '@common/config/enums/config.enum';
+import { ConfigService } from '@common/config';
+
 import { HttpExceptionFilter } from './common/filters';
 import { validationPipe } from './common/pipes';
 
-import { ConfigMode } from '@common/config/enums/config.enum';
-import { ConfigService } from '@common/config';
 import { AppModule } from './app.module';
 import { swaggerSetup } from './swagger';
 

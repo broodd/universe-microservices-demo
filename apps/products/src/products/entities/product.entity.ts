@@ -5,7 +5,7 @@ export class ProductEntity {
   description?: string;
   price: number;
 
-  readonly created_at: Date;
-  readonly updated_at: Date;
-  readonly deleted_at?: Date;
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
+  readonly deletedAt?: Date;
 }

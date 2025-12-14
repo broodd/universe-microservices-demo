@@ -19,7 +19,7 @@ export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
           host: configService.get<string>('DATABASE_HOST'),
           port: configService.get<number>('DATABASE_PORT'),
           database: configService.get<string>('DATABASE_NAME'),
-          transform: { undefined: null },
+          transform: { undefined: null, column: postgres.toCamel },
         });
       },
     },
