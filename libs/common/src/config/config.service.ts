@@ -66,6 +66,7 @@ export class ConfigService implements IConfigService {
         this.options.rootDir,
         process.env[key + this.envFilePostfix],
       );
+
       variable = existsSync(path) ? readFileSync(path, 'utf8') : null;
     }
     if (!variable) throw TypeError(`The ${key} cannot be undefined`);

@@ -11,9 +11,7 @@ export async function swaggerSetup(
 ): Promise<void> {
   if (!configService.get('SWAGGER_ENABLED')) return;
 
-  const config = new DocumentBuilder()
-    .setVersion(configService.get('npm_package_version'))
-    .setTitle(configService.get('npm_package_name'));
+  const config = new DocumentBuilder().setTitle('Universe Test Microservices');
   const document = SwaggerModule.createDocument(app, config.build());
 
   const url = '/';

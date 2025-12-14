@@ -4,20 +4,17 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: test
-      POSTGRES_USER_FILE: /run/secrets/postgres-user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
-    secrets:
-      - postgres-user
-      - postgres-password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - '5432:5432'
-    networks:
-      - network
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $(cat /run/secrets/postgres-user) -d $POSTGRES_DB']
-      interval: 10s
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d test']
+      interval: 5s
       timeout: 5s
       retries: 5
 
@@ -30,29 +27,87 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
-    networks:
-      - network
     volumes:
-      - ./rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq_logs:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     volumes:
       - './prometheus.yml:/etc/prometheus/prometheus.yml'
     ports:
       - 9090:9090
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    networks:
+      - app-network
+
+  products-service:
+    container_name: products-service
+    build:
+      context: .
+      dockerfile: apps/products/Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      NODE_ENV: production
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      SWAGGER_USERNAME: swagger
+      SWAGGER_PASSWORD: swagger
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
+    networks:
+      - app-network
+
+  migrator:
+    container_name: migrator
+    build:
+      context: .
+      dockerfile: ./migrator.Dockerfile
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: test
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    networks:
+      - app-network
+    volumes:
+      - ./db-migrate.sh:/app/db-migrate.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ['/bin/sh', '/app/db-migrate.sh']
+
+  notifications-service:
+    container_name: notifications-service
+    build:
+      context: .
+      dockerfile: apps/notifications/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
 
 networks:
-  network:
+  app-network:
     driver: bridge
 
 volumes:
   postgres_data:
   rabbitmq_data:
-
-secrets:
-  postgres-user:
-    file: ./apps/products/.secrets/postgres-user
-  postgres-password:
-    file: ./apps/products/.secrets/postgres-password

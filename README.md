@@ -1,102 +1,101 @@
-# UniverseMicroservicesDemo
+# Universe Microservices Demo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+This is a microservices-based application built with **NestJS** and **Nx Monorepo**. It demonstrates an event-driven architecture using RabbitMQ, PostgreSQL, and Prometheus monitoring.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## 🏗 Architecture
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/nest?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+The system consists of two main services:
 
-## Run tasks
+1.  **Products Service** (REST API): Handles CRUD operations for products and publishes events.
+2.  **Notifications Service** (Worker): Consumes events from RabbitMQ and logs notifications.
 
-To run the dev server for your app, use:
+### Tech Stack
 
-```sh
-npx nx serve products
+- **Framework:** NestJS (Fastify adapter)
+- **Language:** TypeScript
+- **Database:** PostgreSQL, postgres.js, Drizzle for migrations
+- **Message Broker:** RabbitMQ
+- **Monitoring:** Prometheus
+- **Tooling:** Nx, Docker, Swagger
+
+---
+
+## 🐳 Docker (Full Setup)
+
+To run the entire system (Apps + Infra) inside Docker:
+
+```bash
+docker-compose up --build
 ```
 
-To create a production bundle:
+---
 
-```sh
-npx nx build products
+## 🚀 Getting Started
+
+Follow these steps to run the project locally.
+
+### 1. Prerequisites
+
+- Node.js (v18+)
+- Docker & Docker Compose
+
+### 2. Installation
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-To see all available targets to run for a project, run:
+### 3. Setup Environment & Infrastructure
 
-```sh
-npx nx show project products
+Generate local secrets and start Docker containers (Postgres, RabbitMQ, Prometheus):
+
+```bash
+# Create dummy secrets files (apps/products/.secrets/...)
+npm run seed:secrets
+
+# Start infrastructure
+npm run infra:up
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Wait a few seconds for the database to become healthy. Then run migrations:
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/nest:app demo
+```bash
+npm run db:migrate
 ```
 
-To generate a new library, use:
+### 4. Run Applications
 
-```sh
-npx nx g @nx/node:lib mylib
+Start both microservices (`products` and `notifications`) in parallel:
+
+```bash
+npm run start:all
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+---
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 📡 API & Monitoring
 
-## Set up CI!
+Once the application is running, you can access:
 
-### Step 1
+- **Swagger API Docs:** [http://localhost:8080](http://localhost:8080) (user: `swagger`, pass: `swagger`)
+- **Prometheus UI:** [http://localhost:9090](http://localhost:9090)
+- **RabbitMQ Dashboard:** [http://localhost:15672](http://localhost:15672) (user: `test`, pass: `test`)
+- **Metrics Endpoint:** [http://localhost:8080/api/v1/metrics](http://localhost:8080/api/v1/metrics)
 
-To connect to Nx Cloud, run the following command:
+---
 
-```sh
-npx nx connect
+## 🧪 Testing
+
+To run integration tests:
+
+```bash
+npx nx test products
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+## 📊 Key Metrics
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+To view custom business metrics in Prometheus, search for:
 
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/nest?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- `products_actions_total` - Counter for created/deleted products with labels `status` (success/error) and `action`.

@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "seed:secrets": "mkdir -p apps/products/.secrets && cp -r apps/products/.secrets.example/* apps/products/.secrets/",
+    "infra:up": "docker-compose up -d",
+    "infra:down": "docker-compose down",
     "start:products": "nx serve products",
     "start:notifications": "nx serve notifications",
     "start:all": "nx run-many --target=serve --all --parallel",
