@@ -1,3 +1,5 @@
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+
 import { ThrottlerModule } from '@nestjs/throttler';
 import { Module } from '@nestjs/common';
 
@@ -21,6 +23,13 @@ import { ProductsModule } from './products/products.module';
     }),
     ConfigModule.register({ rootDir: 'apps/products' }),
     DatabaseModule,
+
+    PrometheusModule.register({
+      path: '/metrics',
+      defaultMetrics: {
+        enabled: true,
+      },
+    }),
 
     ProductsModule,
   ],

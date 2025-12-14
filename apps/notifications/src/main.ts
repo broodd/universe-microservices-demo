@@ -16,6 +16,7 @@ async function bootstrap() {
       urls: [configService.get<string>('RABBITMQ_URL')],
       queue: PRODUCTS_QUEUE.name,
       queueOptions: DEFAULT_RMQ_QUEUE_CONFIG,
+      noAck: true,
     },
   });
 

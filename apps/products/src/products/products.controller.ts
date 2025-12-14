@@ -23,7 +23,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  public async deleteOneById(@Param() conditions: ID): Promise<boolean> {
-    return this.service.deleteOneById(conditions);
+  public async deleteOneById(@Param() conditions: ID): Promise<void> {
+    await this.service.deleteOneById(conditions);
   }
 }

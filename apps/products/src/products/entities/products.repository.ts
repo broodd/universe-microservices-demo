@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@nestjs/common';
 
 import { FindManyOptionsDto, PaginationDto } from '@common/dto';
 
-import { DATABASE_CONNECTION } from '@products/database/database.module';
+import { DATABASE_CONNECTION } from '../../database/database.module';
 
 import { CreateProductDto } from '../dto';
 

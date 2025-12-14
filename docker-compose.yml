@@ -36,6 +36,13 @@ services:
       - ./rabbitmq_data:/var/lib/rabbitmq
       - ./rabbitmq_logs:/var/log/rabbitmq
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+
 networks:
   network:
     driver: bridge
